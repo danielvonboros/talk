@@ -42,6 +42,7 @@ export default class Chat extends React.Component {
           createdAt: new Date(),
           system: true,
         },
+        // Is the order important? Right now the messages are shown: id:3 id:2 id:1
       ],
     })
   }
@@ -59,6 +60,7 @@ export default class Chat extends React.Component {
           wrapperStyle={{
             right: {
               backgroundColor: "#000"
+              // Background color for my own chat window. Could be adjusted to fit the color concept to a greenish tone
             }
           }}
       />
@@ -67,21 +69,10 @@ export default class Chat extends React.Component {
 
   render() {
     return (
-      // <View
-      //   style={{
-      //     flex: 1,
-      //     justifyContent: "center",
-      //     alignItems: "center",
-      //     backgroundColor: this.props.route.params.backgroundColor,
-      //   }}>
-      //   <Button
-      //     title='Go to Start'
-      //     onPress={() => this.props.navigation.navigate("Start")}
-        // />
+      
         <View  style={{
           flex: 1,
-          // justifyContent: "center",
-          // alignItems: "center",
+          
           backgroundColor: this.props.route.params.backgroundColor,
         }}>
           <GiftedChat 
@@ -93,6 +84,7 @@ export default class Chat extends React.Component {
             }}
           />
           {Platform.OS === 'android' ? <KeyboardAvoidingView behaviour='height' /> : null }
+          {/* This part is important for Issues with Android Keyboard covering Chat window */}
         </View>
       // </View>
     );
