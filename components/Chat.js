@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Platform, Button, KeyboardAvoidingView } from "react-native";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const firebase = require("firebase");
 require("firebase/firestore");
@@ -60,6 +61,18 @@ export default class Chat extends React.Component {
         .orderBy("createdAt", "desc")
         .onSnapshot(this.onCollectionUpdate);
     });
+  }
+
+  async getMessages() {
+    let messages = "";
+    try {
+      messages = (await AsyncStorage.getItem("messages")) || [];
+      this.setState({
+        messages: JSON.parse(messages),
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   addMessage() {
