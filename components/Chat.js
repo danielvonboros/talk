@@ -36,33 +36,6 @@ export default class Chat extends React.Component {
     this.referenceMessageUser = null;
   }
 
-  componentDidMount() {
-    const name = this.props.route.params.username;
-    this.props.navigation.setOptions({ title: name });
-
-    this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      if (!user) {
-        firebase.auth().signInAnonymously();
-      }
-      this.setState({
-        uid: user.uid,
-        messages: [],
-        user: {
-          _id: user.uid,
-          name: name,
-        },
-      });
-      this.referenceMessagesUser = firebase
-        .firestore()
-        .collection("messages")
-        .where("uid", "==", this.state.uid);
-
-      this.unsubscribe = this.referenceChatMessages
-        .orderBy("createdAt", "desc")
-        .onSnapshot(this.onCollectionUpdate);
-    });
-  }
-
   async getMessages() {
     let messages = "";
     try {
@@ -93,9 +66,20 @@ export default class Chat extends React.Component {
         messages: GiftedChat.append(previousState.messages, messages),
       }),
       () => {
-        this.addMessage();
+        this.saveMessage();
       }
     );
+  }
+
+  async saveMessage() {
+    try {
+      await AsyncStorage.setItem(
+        "messages",
+        JSON.stringyfy(this.state.messages)
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   onCollectionUpdate = (querySnapshot) => {
@@ -131,6 +115,35 @@ export default class Chat extends React.Component {
         }}
       />
     );
+  }
+
+  componentDidMount() {
+    const name = this.props.route.params.username;
+    this.props.navigation.setOptions({ title: name });
+
+    this.getMessages();
+
+    this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      if (!user) {
+        firebase.auth().signInAnonymously();
+      }
+      this.setState({
+        uid: user.uid,
+        messages: [],
+        user: {
+          _id: user.uid,
+          name: name,
+        },
+      });
+      this.referenceMessagesUser = firebase
+        .firestore()
+        .collection("messages")
+        .where("uid", "==", this.state.uid);
+
+      this.unsubscribe = this.referenceChatMessages
+        .orderBy("createdAt", "desc")
+        .onSnapshot(this.onCollectionUpdate);
+    });
   }
 
   componentWillUnmount() {
