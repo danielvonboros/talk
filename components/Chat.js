@@ -6,9 +6,9 @@ import {
   Button,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
-  InputToolbar,
 } from "react-native";
 
+import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 
@@ -22,8 +22,6 @@ const firebaseConfig = {
   storageBucket: "talk-7fc4c.appspot.com",
   messagingSenderId: "30242663855",
 };
-
-import { GiftedChat, Bubble } from "react-native-gifted-chat";
 
 export default class Chat extends React.Component {
   constructor(props) {
@@ -64,7 +62,7 @@ export default class Chat extends React.Component {
     try {
       await AsyncStorage.setItem(
         "messages",
-        JSON.stringyfy(this.state.messages)
+        JSON.stringify(this.state.messages)
       );
     } catch (error) {
       console.log(error.message);
@@ -100,7 +98,9 @@ export default class Chat extends React.Component {
         messages: GiftedChat.append(previousState.messages, messages),
       }),
       () => {
+        // saves message to localStorage
         this.saveMessage();
+        this.addMessage();
       }
     );
   }
@@ -203,8 +203,12 @@ export default class Chat extends React.Component {
   }
 
   componentWillUnmount() {
-    // stop authentication
-    this.authUnsubscribe();
+    if (this.state.isConnected == false) {
+    } else {
+      // stop online authentication
+      this.authUnsubscribe();
+      this.unsubscribe();
+    }
   }
 
   render() {
@@ -218,7 +222,7 @@ export default class Chat extends React.Component {
       >
         <GiftedChat
           messages={this.state.messages}
-          renderBubble={this.renderBubble.bind(this)}
+          renderBubble={this.renderBubble}
           renderInputToolbar={this.renderInputToolbar.bind(this)}
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
