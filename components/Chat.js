@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Platform, Button, KeyboardAvoidingView } from "react-native";
-import AsyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const firebase = require("firebase");
 require("firebase/firestore");
@@ -48,6 +48,28 @@ export default class Chat extends React.Component {
     }
   }
 
+  async saveMessage() {
+    try {
+      await AsyncStorage.setItem(
+        "messages",
+        JSON.stringyfy(this.state.messages)
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  async deleteMessages() {
+    try {
+      await AsyncStorage.removeItem("messages");
+      this.setState({
+        messages: [],
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
   addMessage() {
     const message = this.state.messages[0];
     // add the new messages to the collection
@@ -69,17 +91,6 @@ export default class Chat extends React.Component {
         this.saveMessage();
       }
     );
-  }
-
-  async saveMessage() {
-    try {
-      await AsyncStorage.setItem(
-        "messages",
-        JSON.stringyfy(this.state.messages)
-      );
-    } catch (error) {
-      console.log(error.message);
-    }
   }
 
   onCollectionUpdate = (querySnapshot) => {
