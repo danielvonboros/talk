@@ -1,6 +1,16 @@
 import React from "react";
-import { View, Platform, Button, KeyboardAvoidingView } from "react-native";
+
+import {
+  View,
+  Platform,
+  Button,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  InputToolbar,
+} from "react-native";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from "@react-native-community/netinfo";
 
 const firebase = require("firebase");
 require("firebase/firestore");
@@ -18,6 +28,14 @@ import { GiftedChat, Bubble } from "react-native-gifted-chat";
 export default class Chat extends React.Component {
   constructor(props) {
     super(props);
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    this.referenceChatMessages = firebase.firestore().collection("messages");
+    this.referenceMessageUser = null;
+
     this.state = {
       messages: [],
       uid: 0,
@@ -26,14 +44,8 @@ export default class Chat extends React.Component {
         _id: "",
         name: "",
       },
+      isConnected: false,
     };
-
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-
-    this.referenceChatMessages = firebase.firestore().collection("messages");
-    this.referenceMessageUser = null;
   }
 
   async getMessages() {
@@ -128,32 +140,65 @@ export default class Chat extends React.Component {
     );
   }
 
+  renderInputToolbar(props) {
+    if (this.state.isConnected == false) {
+    } else {
+      return <InputToolbar {...props} />;
+    }
+  }
+
   componentDidMount() {
     const name = this.props.route.params.username;
     this.props.navigation.setOptions({ title: name });
 
-    this.getMessages();
+    // Check online status of user
+    NetInfo.fetch().then((connection) => {
+      if (connection.isConnected) {
+        // online
+        console.log("online");
+        this.setState({
+          isConnected: true,
+        });
 
-    this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      if (!user) {
-        firebase.auth().signInAnonymously();
+        this.getMessages();
+        this.renderInputToolbar();
+
+        this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
+          if (!user) {
+            firebase.auth().signInAnonymously();
+          }
+          this.setState({
+            uid: user.uid,
+            messages: [],
+            user: {
+              _id: user.uid,
+              name: name,
+            },
+          });
+
+          // Create reference to messages of active users
+          this.referenceMessagesUser = firebase
+            .firestore()
+            .collection("messages")
+            .where("uid", "==", this.state.uid);
+
+          // Listen for collection changes
+          this.unsubscribe = this.referenceChatMessages
+            .orderBy("createdAt", "desc")
+            .onSnapshot(this.onCollectionUpdate);
+        });
+      } else {
+        // offline
+        console.log("offline");
+        this.setState({
+          isConnected: false,
+        });
+        // hide Input Toolbar to prevent new messages in offline mode
+        this.renderInputToolbar();
+
+        // get messages from offline storage
+        this.getMessages();
       }
-      this.setState({
-        uid: user.uid,
-        messages: [],
-        user: {
-          _id: user.uid,
-          name: name,
-        },
-      });
-      this.referenceMessagesUser = firebase
-        .firestore()
-        .collection("messages")
-        .where("uid", "==", this.state.uid);
-
-      this.unsubscribe = this.referenceChatMessages
-        .orderBy("createdAt", "desc")
-        .onSnapshot(this.onCollectionUpdate);
     });
   }
 
@@ -174,6 +219,7 @@ export default class Chat extends React.Component {
         <GiftedChat
           messages={this.state.messages}
           renderBubble={this.renderBubble.bind(this)}
+          renderInputToolbar={this.renderInputToolbar.bind(this)}
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
           user={this.state.user}
