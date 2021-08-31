@@ -1,5 +1,7 @@
 import React from "react";
 
+import CustomActions from "./CustomActions";
+
 import {
   View,
   Platform,
@@ -7,6 +9,9 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
 } from "react-native";
+
+// import MapView from "react-native-maps";
+import { MapView } from "expo";
 
 import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -132,19 +137,47 @@ export default class Chat extends React.Component {
         {...props}
         wrapperStyle={{
           right: {
-            backgroundColor: "#000",
+            backgroundColor: "#1b064c",
             // Background color for my own chat window. Could be adjusted to fit the color concept to a greenish tone
+          },
+          left: {
+            backgroundColor: "#FFF",
           },
         }}
       />
     );
   }
 
+  // hides the Input toolbar when user is offline
   renderInputToolbar(props) {
     if (this.state.isConnected == false) {
     } else {
       return <InputToolbar {...props} />;
     }
+  }
+
+  // shows the Action menu (imagePicker, Camera, Location) sub-menu in Chat window
+  renderCustomActions = (props) => {
+    return <CustomActions {...props} />;
+  };
+
+  //renders a Map View when the message is a location
+  renderCustomView(props) {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
   }
 
   componentDidMount() {
@@ -221,9 +254,11 @@ export default class Chat extends React.Component {
         }}
       >
         <GiftedChat
+          renderBubble={this.renderBubble.bind(this)}
           messages={this.state.messages}
-          renderBubble={this.renderBubble}
           renderInputToolbar={this.renderInputToolbar.bind(this)}
+          renderActions={this.renderCustomActions}
+          renderCustomView={this.renderCustomView}
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
           user={this.state.user}

@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ImageBackground,
+  Image,
 } from "react-native";
 
 import Chat from "./Chat";
@@ -21,8 +22,12 @@ export default class Start extends React.Component {
       <View style={styles.background}>
         <ImageBackground
           style={styles.backgroundImageStart}
-          source={require("../assets/Background-Image.png")}>
-          <Text style={styles.appName}>talk</Text>
+          source={require("../assets/talk_background.jpg")}
+        >
+          <Image
+            style={styles.appName}
+            source={require("../assets/talkLogo.png")}
+          ></Image>
         </ImageBackground>
 
         {/* View Component for Chat-Username */}
@@ -31,7 +36,7 @@ export default class Start extends React.Component {
             style={styles.inputField}
             onChangeText={(username) => this.setState({ username })}
             value={this.state.username}
-            placeholder='Type in your name'
+            placeholder="Type in your name"
           />
           {/* View Component for Chat Background Color Selector */}
           <View>
@@ -62,7 +67,8 @@ export default class Start extends React.Component {
                 username: this.state.username,
                 backgroundColor: this.state.backgroundColor,
               })
-            }>
+            }
+          >
             <Text style={styles.chatButtonText}>Go to Chat</Text>
           </TouchableOpacity>
         </View>
@@ -80,11 +86,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   appName: {
-    fontSize: 45,
-    fontWeight: "600",
-    color: "#FFF",
+    width: "50%",
+    height: "50%",
     marginBottom: "80%",
-    flex: 0.5,
+    flex: 0.7,
   },
   background: {
     width: "100%",
@@ -153,7 +158,7 @@ const styles = StyleSheet.create({
   chatButton: {
     alignItems: "center",
     width: "88%",
-    height: 40,
+    height: 38,
     backgroundColor: "#5E6B61",
   },
   chatButtonText: {
