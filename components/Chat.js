@@ -2,23 +2,18 @@ import React from "react";
 
 import CustomActions from "./CustomActions";
 
-import {
-  View,
-  Platform,
-  Button,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { View, Platform, KeyboardAvoidingView } from "react-native";
 
-// import MapView from "react-native-maps";
-import { MapView } from "expo";
-
+// Gifted Chat
 import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
+// Map View for messages
+import MapView from "react-native-maps";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 
-const firebase = require("firebase");
-require("firebase/firestore");
+import firebase from "firebase";
+import("firebase/firestore");
 
 const firebaseConfig = {
   apiKey: "AIzaSyCgPoqVSMpvLoKdTdlSA-pbYtr6cl2HVhE",
@@ -36,6 +31,7 @@ export default class Chat extends React.Component {
       firebase.initializeApp(firebaseConfig);
     }
 
+    // Check for updates in Firestore
     this.referenceChatMessages = firebase.firestore().collection("messages");
     this.referenceMessageUser = null;
 
@@ -53,10 +49,15 @@ export default class Chat extends React.Component {
 
   async getMessages() {
     let messages = "";
+    let uid = "";
     try {
       messages = (await AsyncStorage.getItem("messages")) || [];
+      uid = await AsyncStorage.getItem("uid");
+
       this.setState({
+        // Set uid and messages from asyncStorage
         messages: JSON.parse(messages),
+        uid: JSON.parse(uid),
       });
     } catch (error) {
       console.log(error.message);
@@ -91,9 +92,11 @@ export default class Chat extends React.Component {
     this.referenceChatMessages.add({
       uid: this.state.uid,
       _id: message._id,
-      text: message.text,
+      text: message.text || "",
       createdAt: message.createdAt,
       user: message.user,
+      image: message.image || null,
+      location: message.location || null,
     });
   }
 
@@ -120,6 +123,8 @@ export default class Chat extends React.Component {
         _id: data._id,
         text: data.text,
         createdAt: data.createdAt.toDate(),
+        image: data.image || null,
+        location: data.location || null,
         user: {
           _id: data.user._id,
           name: data.user.name,

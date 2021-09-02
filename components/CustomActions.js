@@ -17,6 +17,7 @@ import * as Location from "expo-location";
 
 import firebase from "firebase";
 import firestore from "firebase";
+import { Actions } from "react-native-gifted-chat";
 
 export default class CustomActions extends React.Component {
   constructor(props) {
@@ -28,17 +29,21 @@ export default class CustomActions extends React.Component {
   // Pick an image from the camera roll
   pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    try {
+      if (status === "granted") {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+        }).catch((error) => console.log(error));
 
-    if (status === "granted") {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-      }).catch((error) => console.log(error));
-
-      if (!result.cancelled) {
-        this.setState({
-          image: result.uri,
-        });
+        if (!result.cancelled) {
+          const imageUrl = await this.uploadImageFetch(result.uri);
+          this.props.onSend({
+            image: imageUrl,
+          });
+        }
       }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -66,19 +71,28 @@ export default class CustomActions extends React.Component {
 
   // share your location in the chat
   getLocation = async () => {
-    await Location.requestForegroundPermissionsAsync();
-    let locationResult = await Location.getCurrentPositionAsync({}).catch(
-      (error) => console.log(error)
-    );
-    const longitude = JSON.stringify(locationResult.coords.longitude);
-    const latitude = JSON.stringify(locationResult.coords.latitude);
-    if (locationResult) {
-      this.props.onSend({
-        location: {
-          longitude: locationResult.coords.longitude,
-          latitude: locationResult.coords.latitude,
-        },
-      });
+    const { status } = await Location.requestForegroundPermissionsAsync();
+
+    try {
+      if (status === "granted") {
+        const location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        }).catch((error) => {
+          console.error(error);
+        });
+        const longitude = location.coords.longitude;
+        const latitude = location.coords.latitude;
+        if (location) {
+          this.props.onSend({
+            location: {
+              longitude,
+              latitude,
+            },
+          });
+        }
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -112,7 +126,7 @@ export default class CustomActions extends React.Component {
 
   onActionPress = () => {
     const options = [
-      "Choose From Library",
+      "Choose Image From Library",
       "Take Picture",
       "Send Location",
       "Cancel",
@@ -142,7 +156,14 @@ export default class CustomActions extends React.Component {
 
   render() {
     return (
-      <TouchableOpacity style={[styles.container]} onPress={this.onActionPress}>
+      <TouchableOpacity
+        style={[styles.container]}
+        onPress={this.onActionPress}
+        accessible={true}
+        accessibilityLabel="Actions menu"
+        accessibilityHint="Display menu to send a picture, take a picture or send location"
+        accessibilityRole="menu"
+      >
         <View style={[styles.wrapper, this.props.wrapperStyle]}>
           <Text style={[styles.iconText, this.props.iconTextStyle]}>+</Text>
         </View>
