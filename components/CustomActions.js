@@ -161,7 +161,7 @@ export default class CustomActions extends React.Component {
         onPress={this.onActionPress}
         accessible={true}
         accessibilityLabel="Actions menu"
-        accessibilityHint="Display menu to send a picture, take a picture or send location"
+        accessibilityHint="Display menu to send a picture or location"
         accessibilityRole="menu"
       >
         <View style={[styles.wrapper, this.props.wrapperStyle]}>
