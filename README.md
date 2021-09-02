@@ -1,9 +1,11 @@
 ![alt talkLogo](https://github.com/danielvonboros/talk/blob/main/assets/talkLogo.png?raw=true)
+<br>
 talk Chat App is a React Native Chat Application
 
-#### Setting up the Development Environment:
-
-##### Required tools:
+<hr>
+### Setting up the Development Environment:
+<ul>
+#### Required tools:
 
 <ul>
 <li>VisualStudio Code</li>
@@ -11,13 +13,13 @@ talk Chat App is a React Native Chat Application
 <li>Android Studio (for Android Emulator)</li>
 </ul>
 
-##### Not necessary but useful:
+#### Not necessary but useful:
 
 <ul>
 <li>(Xcode for iOS Simulator)</li>
 <li>(Smartphone running ExpoGo)</li>
-
-##### Project Dependencies:
+</ul>
+#### Project Dependencies:
 
 <ul>
 <li>react-native</li>
@@ -26,7 +28,7 @@ talk Chat App is a React Native Chat Application
 <li>firestore firebase (Database & Storage)</li>
 </ul>
 
-#### Setting up the tools:
+### Setting up the tools:
 
 First up, make sure you have expo installed globally.
 Do this by typing
@@ -74,7 +76,7 @@ You can now download the repo to your computer, install the necessary modules by
 $ npm install
 ```
 
-#### Configuration
+### Cloud Storage Configuration
 
 Once you have your computer (and probably phone) prepared to run projects with expo, you can start using the application or modify it.
 
@@ -105,7 +107,7 @@ const app = initializeApp(firebaseConfig);
 
 You access this data by clicking on the 'cog'-symbol, next to project overview, and then click on 'Project settings'.
 
-#### To run the app
+### Run the app
 
 ```
 $ expo start
@@ -114,3 +116,5 @@ $ expo start
 and choose if you want to emulate/simulate the application on your computer or if you want to run it on your smartphone using "Expo Go".
 
 You're done! Happy hacking!
+
+<hr>
