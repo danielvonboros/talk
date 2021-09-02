@@ -3,8 +3,11 @@
 talk Chat App is a React Native Chat Application
 
 <hr>
+
 ### Setting up the Development Environment:
+
 <ul>
+
 #### Required tools:
 
 <ul>
@@ -19,6 +22,7 @@ talk Chat App is a React Native Chat Application
 <li>(Xcode for iOS Simulator)</li>
 <li>(Smartphone running ExpoGo)</li>
 </ul>
+
 #### Project Dependencies:
 
 <ul>
