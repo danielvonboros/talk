@@ -43,24 +43,21 @@ $ npm install --global expo-cli
 
 in your terminal
 
+You can now download the repo to your computer, install the necessary modules by running:
+
+```
+$ npm install
+```
+
 While expo is being installed to your local machine, now is the perfect time to get <a href="https://developer.android.com/studio">Android Studio</a> and start the installation for Android Studio in order to be able to emulate the project on your computer. Be sure to choose the custom options while installing and selecting 'Android Virtual Device' if not
 checked already. If you need help getting started with setting up the emulator, try this <a href="https://developer.android.com/studio/run/emulator">guide</a>
-
-Now it's to create a new expo project with
-
-```
-$ expo init my-project
-```
-
-in your terminal
-To start with a blank project, like we intend to do, choose "blank" from the menu when asked.
 
 If you haven't done so already, install 'Expo Go' to your mobile device. Check these links for <a href='https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en'>Android</a> and <a href="https://apps.apple.com/de/app/expo-go/id982107779">iPhone</a> if you need help.
 
 Now start the development server by typing
 
 ```
-expo start
+$ expo start
 ```
 
 your browser should open with the 'Metro Bundler', showing you the QR code to open the app on your mobile device. There's also shortcuts **i** for **iOs**, **a** for **Android** (both simulators/emulators), **w** for **web** (provides web emulators, but you have to queue to simulate the app and it's slow)
@@ -73,12 +70,6 @@ To let your phone run the application,
 - on iOs: use the camera app to scan the QR code and confirm the launch of the "Expo Go" application, then the project will load.
 
 Once having checked the basic functionality of "Expo" on both your computer and "Expo Go" on your smartphone, you're good to go for getting the application set up.
-
-You can now download the repo to your computer, install the necessary modules by running:
-
-```
-$ npm install
-```
 
 ### Cloud Storage Configuration
 
@@ -121,4 +112,6 @@ and choose if you want to emulate/simulate the application on your computer or i
 
 You're done! Happy hacking!
 
-<hr>
+### Contact me!
+
+Get in touch! Contact me <a href="https://linkedin.com/in/daniel-von-boros-92878a186">here</a> to talk about collaborations.
